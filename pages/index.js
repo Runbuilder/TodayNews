@@ -83,7 +83,7 @@ const App = () => {
     <Container>
       <HeroSection>
         <Header>Card News</Header>
-        <SubHeader>Explore the Globe with Us</SubHeader>
+        <SubHeader>부자가 되기 위해 반드시 알아야 할 소식</SubHeader>
         <Button>View Latest Posts</Button>
       </HeroSection>
       <h2>Featured Posts</h2>
