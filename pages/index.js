@@ -1,18 +1,44 @@
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Card from '../components/Card';
+import Swal from 'sweetalert2';
 
 const Container = styled.div`
-  padding: 20px;
   text-align: center;
-  background-color: #f0f8ff; /* 파스텔 배경색 */
+  background-color: #f0f8ff;
 `;
 
 const HeroSection = styled.div`
-  background: url('https://cdn.pixabay.com/photo/2023/06/17/05/55/return-8069270_1280.jpg') no-repeat center center; /* 히어로 섹션 배경 이미지 */
-  background-size: cover; /* 배경 이미지가 섹션을 가득 채우도록 설정 */
+  position: relative;
   padding: 50px 20px;
-  border-radius: 8px;
   margin-bottom: 20px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  overflow: hidden;
+`;
+
+const VideoBackground = styled.video`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translateX(-50%) translateY(-50%);
+  object-fit: cover;
+`;
+
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Header = styled.h1`
@@ -35,69 +61,87 @@ const Button = styled.button`
   font-size: 1em;
 `;
 
-const FeaturedPosts = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
 `;
+ 
+ 
 
-const MostRecent = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
+const getRandomColor = () => {
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F67280', '#C06C84'];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
 
 const App = () => {
-  const featuredPosts = [
-    {
-      title: 'The Road Ahead',
-      date: 'September 25, 2015',
-      image: 'https://via.placeholder.com/300',
-    },
-    {
-      title: 'From Top Down',
-      date: 'September 25, 2015',
-      image: 'https://via.placeholder.com/300',
-    },
-  ];
+  const [posts, setPosts] = useState([]);
+  const videoRef = useRef(null);
 
-  const recentPosts = [
-    {
-      title: 'Still Standing Tall',
-      date: '9/25/2015',
-      image: 'https://via.placeholder.com/300',
-    },
-    {
-      title: 'Sunny Side Up',
-      date: '9/25/2015',
-      image: 'https://via.placeholder.com/300',
-    },
-    {
-      title: 'Water Falls',
-      date: '9/25/2015',
-      image: 'https://via.placeholder.com/300',
-    },
-  ];
+  useEffect(() => {
+    fetch('https://script.google.com/macros/s/AKfycbzReVLSaBmj_JTP1q6o85G0ANtNjSkIDn1JD4BlqbL0ZPYxiSDHYvWPcgb0WYInDUnCZA/exec')
+      .then(response => response.json())
+      .then(data => {
+        setPosts(data);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.error("비디오 자동 재생 실패:", error);
+      });
+    }
+  }, []);
+
+  const handleCardClick = (content,source) => {
+    Swal.fire({
+      html: `
+        <div style="font-size: 1.2em; max-width: 90vw; overflow: auto; text-align: left; white-space: pre-wrap;  "> ${content}</div>
+      `,
+      showCancelButton: true,
+      cancelButtonText: "닫기",
+      confirmButtonText: "뉴스기사",
+      width: 'auto',
+      maxWidth: '90%', 
+      grow: 'row',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.open(source, '_blank');
+      }  
+    });
+  };
 
   return (
     <Container>
       <HeroSection>
-        <Header>Card News</Header>
-        <SubHeader>부자가 되기 위해 반드시 알아야 할 소식!!!</SubHeader>
-        <Button>View Latest Posts</Button>
+        <VideoBackground ref={videoRef} autoPlay loop muted playsInline>
+          <source src="/video.mp4" type="video/mp4" />
+          동영상을 지원하지 않는 브라우저입니다.
+        </VideoBackground>
+        <HeroContent>
+          <Header>Rich News</Header>
+          <SubHeader>AI-Selected Latest Economic News</SubHeader>
+          <Button>View Latest Posts</Button>
+        </HeroContent>
       </HeroSection>
-      <h2>Featured Posts</h2>
-      <FeaturedPosts>
-        {featuredPosts.map((post, index) => (
-          <Card key={index} {...post} />
+      <CardGrid>
+        {posts.map((post, index) => (
+          <Card 
+            key={index} 
+            title={post.제목}
+            date={new Date(post.날짜).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\. /g, '.').replace('.', '')}
+            emoji={post.이모지}
+            category={post.카테고리}
+            source={post.출처}
+            onClick={() => handleCardClick(post.내용,post.출처)}
+            backgroundColor={getRandomColor()}
+          />
         ))}
-      </FeaturedPosts>
-      <h2>Most Recent</h2>
-      <MostRecent>
-        {recentPosts.map((post, index) => (
-          <Card key={index} {...post} />
-        ))}
-      </MostRecent>
+      </CardGrid>
+      
     </Container>
   );
 };

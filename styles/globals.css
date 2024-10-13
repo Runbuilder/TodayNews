@@ -24,7 +24,12 @@ body {
 h2 {
   margin: 20px 0;
 }
-
+.hero-section {
+  background-image: url('https://cdn.pixabay.com/photo/2023/06/17/05/55/return-8069270_1280.jpg');
+  background-size: cover; /* 배경 이미지가 섹션을 가득 채우도록 설정 */
+  background-position: center; /* 배경 이미지의 위치를 중앙으로 설정 */
+  /* ... 기존 스타일 ... */
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;

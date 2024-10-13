@@ -1,42 +1,72 @@
 import styled from 'styled-components';
 
-const CardContainer = styled.div`
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin: 10px;
+const CardWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 15px;
   overflow: hidden;
-  width: 100%;
-  max-width: 300px;
-`;
+  background-color: ${props => props.backgroundColor};
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-const CardImage = styled.img`
-  width: 100%;
-  height: auto;
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+  }
 `;
 
 const CardContent = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-const Title = styled.h3`
+const CardCategory = styled.span`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255,255,255,0.2);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8em;
+`;
+
+const CardDate = styled.span`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.8em;
+`;
+
+const CardEmoji = styled.div`
+  font-size: 4em;
+  text-align: center;
+  margin-bottom: 5px;
+`;
+
+const CardTitle = styled.h3`
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1em;
+  text-align: center;
 `;
 
-const Date = styled.p`
-  color: #888;
-  font-size: 0.9em;
-`;
-
-const Card = ({ title, date, image }) => (
-  <CardContainer>
-    <CardImage src={image} alt={title} />
+const Card = ({ title, date, emoji, category, onClick, backgroundColor }) => (
+  <CardWrapper onClick={onClick} backgroundColor={backgroundColor}>
     <CardContent>
-      <Title>{title}</Title>
-      <Date>{date}</Date>
+      <CardCategory>{category}</CardCategory>
+      <CardDate>{date}</CardDate>
+      <CardEmoji>{emoji}</CardEmoji>
+      <CardTitle>{title}</CardTitle>
     </CardContent>
-  </CardContainer>
+  </CardWrapper>
 );
 
 export default Card;
